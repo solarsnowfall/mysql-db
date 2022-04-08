@@ -1,0 +1,24 @@
+{
+    "name": "solarsnowfall/mysql",
+    "description": "A simple set of mysql wrappers for automating queries.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Travis Miller",
+            "email": "travis@twooutrally.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "ext-mysqli": "*",
+        "ext-ctype": "*",
+        "ext-memcache": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Solar\\": "src/"
+        }
+    }
+}
