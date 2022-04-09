@@ -17,6 +17,21 @@ class Where extends AbstractSqlClause
     }
 
     /**
+     * @param Schema|string $table
+     * @return AbstractSqlClause
+     * @throws \Exception
+     */
+    public function setTable($table): AbstractSqlClause
+    {
+        if (!$table instanceof Schema)
+            $table = new Schema($table);
+
+        $this->table = $table;
+
+        return $this;
+    }
+
+    /**
      * @param bool $compact
      * @return string
      */
@@ -63,16 +78,23 @@ class Where extends AbstractSqlClause
 
                     for ($j = 0; $j < count($words); $j += 3)
                     {
-                        $nameAndFunction = $this->parseName($words[$j]);
+                        $parsed = $this->parseName($words[$j]);
 
                         $name = $this->formatName($words[$j]);
 
-                        $expressions[] = "$name {$words[$j+1]} " . $this->paramMarker($words[$j+2]);
+                        $isColumn = !$this->isNotColumn($words[$j+1]);
 
-                        $this->preparedColumns[] = [
-                            'name'  => $nameAndFunction['name'] ?? $words[$j],
-                            'value' => $words[$j+2]
-                        ];
+                        $param = !$isColumn ? $this->paramMarker($words[$j+2]) : $words[$j+2];
+
+                        $expressions[] = "$name {$words[$j+1]} $param";
+
+                        if (!$isColumn)
+                        {
+                            $this->preparedColumns[] = [
+                                'name'  => $parsed['name'] ?? $words[$j],
+                                'value' => $words[$j+2]
+                            ];
+                        }
                     }
 
                     $sql .= ' ' . implode(' AND ', $expressions);
@@ -98,9 +120,9 @@ class Where extends AbstractSqlClause
             {
                 $values = (array) $value;
 
-                $nameAndFunction = $this->parseName($key);
+                $parsed = $this->parseName($key);
 
-                $name = $this->formatName($key);
+                $name = $this->formatName($key, count($values) === 1);
 
                 $sql .= " $name";
 
@@ -111,7 +133,7 @@ class Where extends AbstractSqlClause
                     $sql .= is_string($nextKey) ? ' AND' : ' OR';
 
                 foreach ($values as $v)
-                    $this->preparedColumns[] = ['name' => $nameAndFunction['name'] ?? $key, 'value' => $v];
+                    $this->preparedColumns[] = ['name' => $parsed['name'] ?? $key, 'value' => $v];
             }
         }
 

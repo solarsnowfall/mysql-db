@@ -13,6 +13,9 @@ class OrderBy extends AbstractSqlClause
 
     public function generateSqlString(): string
     {
+        if (empty($this->parameters))
+            return '';
+
         return 'ORDER BY ' . implode(', ', $this->parameters);
     }
 

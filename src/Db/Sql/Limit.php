@@ -19,6 +19,9 @@ class Limit extends AbstractSqlClause
      */
     public function generateSqlString(): string
     {
+        if (empty($this->parameters))
+            return '';
+
         return 'LIMIT ' . $this->paramMarker($this->parameters);
     }
 }

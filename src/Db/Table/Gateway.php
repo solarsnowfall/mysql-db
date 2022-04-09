@@ -4,7 +4,6 @@ namespace Solar\Db\Table;
 
 use Solar\Db\DbConnection;
 use Solar\Db\Sql\Sql;
-use Solar\Object\Factory;
 
 class Gateway
 {
@@ -40,7 +39,7 @@ class Gateway
      */
     public function __construct(string $table)
     {
-        $this->table = $this->formatName($table);
+        $this->table = $table;
 
         $this->db = DbConnection::getInstance();
 
@@ -135,9 +134,11 @@ class Gateway
         if (!$this->schema->hasCompletePrimaryKey($index))
             throw new \Exception('Cannot update row on incomplete key');
 
-        $update = $this->sql->update();
+        $this->schema->testRow($columns);
 
-        $statement = $update->table($this->schema)->set($columns)->where($index)->execute();
+        $update = $this->sql->update($this->schema);
+
+        $statement = $update->set($columns)->where($index)->execute();
 
         return $statement->affectedRows();
     }

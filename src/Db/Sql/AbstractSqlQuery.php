@@ -64,22 +64,24 @@ abstract class AbstractSqlQuery extends AbstractSqlClause implements SqlQueryInt
 
         $params = []; $types = '';
 
+        $preparedColumns = $this->preparedColumns;
+
         if ($this->where !== null)
+            $preparedColumns = array_merge($preparedColumns, $this->where->getPreparedColumns());
+
+        foreach ($preparedColumns as $column)
         {
-            foreach ($this->where->getPreparedColumns() as $column)
-            {
-                $params[] = $column['value'];
+            $params[] = $column['value'];
 
-                $parts = explode('.', $column['name']);
+            $parts = explode('.', $column['name']);
 
-                $table = count($parts) === 2 ? $parts[0] : null;
+            $table = count($parts) === 2 ? $parts[0] : null;
 
-                $name = count($parts) === 2 ? $parts[1] : $parts[0];
+            $name = count($parts) === 2 ? $parts[1] : $parts[0];
 
-                $table = $table === null ? $this->table : new Schema($table);
+            $table = $table === null ? $this->table : new Schema($table);
 
-                $types .= $table->getColumn($name)->getParamType($column['value']);
-            }
+            $types .= $table->getColumn($name)->getParamType($column['value']);
         }
 
         if ($this->limit !== null)
@@ -179,42 +181,16 @@ abstract class AbstractSqlQuery extends AbstractSqlClause implements SqlQueryInt
     /**
      * @param array $where
      * @return SqlQueryInterface
+     * @throws \Exception
      */
     public function where(array $where): SqlQueryInterface
     {
+        if ($this->table === null)
+            throw new \Exception('No table specified');
+
         $this->where = new Where($where);
 
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     * @throws \Exception
-     */
-    protected function isColumnName(string $name)
-    {
-        $parts = explode('.', $name);
-
-        foreach ($parts as $key => $value)
-            $parts[$key] = str_replace('`', '', $value);
-
-        $table = count($parts) === 1 ? $this->table : new Schema($parts[0]);
-
-        return $table->hasColumn($parts[0]);
-    }
-
-    /**
-     * @param Schema|string $table
-     * @return $this
-     * @throws \Exception
-     */
-    protected function setTable($table): SqlQueryInterface
-    {
-        if (!$table instanceof Schema)
-            $table = new Schema($table);
-
-        $this->table = $table;
+        $this->where->setTable($this->table);
 
         return $this;
     }

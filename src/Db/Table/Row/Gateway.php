@@ -62,13 +62,11 @@ class Gateway
      */
     public function extractPrimaryKey($indexOrColumns, array $columns = []): array
     {
-        var_dump($indexOrColumns);
-
         return $this->gateway->getSchema()->extractPrimaryKey($indexOrColumns, $columns);
     }
 
     /**
-     * @param $index
+     * @param int|string|array $index
      * @return RowInterface
      * @throws \Exception
      */

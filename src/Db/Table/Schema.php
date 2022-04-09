@@ -108,7 +108,7 @@ class Schema
     }
 
     /**
-     * @param $indexOrColumns
+     * @param int|string|array $indexOrColumns
      * @param array $columns
      * @return array
      */
@@ -120,7 +120,7 @@ class Schema
 
         if (is_scalar($indexOrColumns))
         {
-            $primaryKey[$indexes[1]->getColumnDefault()] = $indexOrColumns;
+            $primaryKey[$indexes[1]->getColumnName()] = $indexOrColumns;
 
             if (count($indexes) === 1)
                 return $primaryKey;
@@ -279,8 +279,6 @@ class Schema
      */
     public function hasCompletePrimaryKey($indexOrColumns): bool
     {
-        var_dump($indexOrColumns);
-
         if (is_null($indexOrColumns))
             return false;
 

@@ -2,6 +2,8 @@
 
 namespace Solar\Db\Sql;
 
+use Solar\Db\Table\Schema;
+
 abstract class AbstractSqlClause implements SqlClauseInterface
 {
     /**
@@ -18,6 +20,11 @@ abstract class AbstractSqlClause implements SqlClauseInterface
      * @var string|null
      */
     protected ?string $sqlString = null;
+
+    /**
+     * @var Schema|null
+     */
+    protected ?Schema $table = null;
 
     /**
      * @return array
@@ -45,6 +52,21 @@ abstract class AbstractSqlClause implements SqlClauseInterface
             $this->sqlString = $this->generateSqlString();
 
         return $this->formatSqlString($this->sqlString, $compact);
+    }
+
+    /**
+     * @param Schema|string $table
+     * @return $this
+     * @throws \Exception
+     */
+    public function setTable($table): SqlClauseInterface
+    {
+        if (!$table instanceof Schema)
+            $table = new Schema($table);
+
+        $this->table = $table;
+
+        return $this;
     }
 
     /**
@@ -116,6 +138,9 @@ abstract class AbstractSqlClause implements SqlClauseInterface
         if ($parsed['alias'])
             $formatted .= " AS `{$parsed['alias']}`";
 
+        if ($param)
+            $formatted .= ' = ' . $this->paramMarker($name);
+
         return $formatted;
     }
 
@@ -146,6 +171,40 @@ abstract class AbstractSqlClause implements SqlClauseInterface
             $sql = preg_replace('/\s*,\s*/', ',', $sql);
 
         return $sql;
+    }
+
+    /**
+     * @param mixed $nameOrParam
+     * @return bool
+     */
+    protected function isNotColumn($nameOrParam): bool
+    {
+        try {
+
+            if (
+                strtoupper($nameOrParam) === 'NULL'
+                || is_numeric($nameOrParam) // integers, floats etc
+                || preg_match("/^(\"\w+\")|('\w+')$/", $nameOrParam) // quoted value
+            ) {
+
+                return true;
+
+            } else {
+
+                $parsed = $this->parsename($nameOrParam);
+
+                if (empty($parsed['column']))
+                    return false;
+
+                $table = !empty($parsed['table']) ? new Schema($parsed['table']) : $this->table;
+
+                return $table->hasColumn($nameOrParam);
+            }
+
+        } catch (\Exception $exception) {
+
+            return false;
+        }
     }
 
     /**
