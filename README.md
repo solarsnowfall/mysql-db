@@ -11,3 +11,9 @@ use Solar\Db\DbConnection::initialize([
   'database'  => 'database'
 ]);
 ```
+Then when you need it...
+```
+include 'config.php';
+
+$db = Solar\Db\DbConnection::getInstance();
+```
