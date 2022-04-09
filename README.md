@@ -27,9 +27,28 @@ class User extends AbstractRow
 {
   const TABLE = 'user';
   
-  protected int $id;
-  
   protected string $email;
   
+  protected string $fullName;
+  
+  protected int $id;
+}
+```
+Map rows to your objects using the table gateway.
+```
+$gateway = new Solar\Db\Table\Gateway(User::TABLE, User::class);
+
+$user = $gateway->fetchRow(['id' => 1]);
+```
+Access properties with smart magic accessors and mutators.
+```
+class User
+{
+  const MAGIC_GETTERS = true;
+  
+  const MAGIC_SETTERS = true;
+  
+  const TABLE = 'user';
   ...
 }
+```
