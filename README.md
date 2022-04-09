@@ -68,7 +68,10 @@ $sql = new Sql();
 
 $insert = $sql->insert();
 
-$index = $insert->columns(['email', 'full_name'])->into('user')->set(['janedoe@gmail.com', 'Jane Doe'])->execute();
+$index = $insert->columns(['email', 'full_name'])
+    ->into('user')
+    ->set(['janedoe@gmail.com', 'Jane Doe'])
+    ->execute();
 ```
 Or just do it from your class.
 ```
