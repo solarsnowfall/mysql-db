@@ -65,5 +65,9 @@ Or just do it from your class.
 // Returns a fully formed primary key array.
 $index = $user->setEmail($email)->setFullName($fullName)->insert();
 ```
+Use the speedy cached schema interface to know a little more about your interface.
+```
+$table = Solar\Db\Table\Schema(User::TABLE);
 
+$paramTypes = $table->getParamTypes($columns);
 ```
