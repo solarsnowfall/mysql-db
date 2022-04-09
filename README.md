@@ -17,3 +17,19 @@ include 'config.php';
 
 $db = Solar\Db\DbConnection::getInstance();
 ```
+Provides a wrapper which enforces a prepared statement only paradimg.
+```
+$stmt = $db->execute($sql, $params, $types);
+```
+Map table rows to objects by extending the AbstractRow.
+```
+class User extends AbstractRow
+{
+  const TABLE = 'user';
+  
+  protected int $id;
+  
+  protected string $email;
+  
+  ...
+}
