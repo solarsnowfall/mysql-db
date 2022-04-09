@@ -34,15 +34,15 @@ class User extends AbstractRow
   protected int $id;
 }
 ```
-Map rows to your objects using the table gateway.
+Map rows to your objects using the table row gateway.
 ```
-$gateway = new Solar\Db\Table\Gateway(User::TABLE, User::class);
+$gateway = new Solar\Db\Table\Row\Gateway(User::TABLE, User::class);
 
 $user = $gateway->fetchRow(['id' => 1]);
 ```
 Access properties with smart magic accessors and mutators.
 ```
-class User
+class User extends AbstractRow
 {
   const MAGIC_GETTERS = true;
   
@@ -51,4 +51,19 @@ class User
   const TABLE = 'user';
   ...
 }
+```
+Zend Db insprited query automation. This mostly exists to facilitate the table and row gateways, but most workaday queries can be handled.
+```
+$sql = new Solar\Db\Sql\Sql();
+
+$insert = $sql->insert();
+
+$index = $insert->columns(['email', 'full_name'])->into('user')->set(['janedoe@gmail.com', 'Jane Doe')->execute();
+```
+Or just do it from your class.
+```
+// Returns a fully formed primary key array.
+$index = $user->setEmail($email)->setFullName($fullName)->insert();
+```
+
 ```
