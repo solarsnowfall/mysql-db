@@ -50,8 +50,6 @@ $user = $gateway->fetchRow(['id' => 1]);
 ```
 Access properties with smart magic accessors and mutators.
 ```
-use Solar\Db\Table\Row\AbstractRow;
-
 class User extends AbstractRow
 {
   const MAGIC_GETTERS = true;
