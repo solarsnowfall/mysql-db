@@ -184,17 +184,13 @@ class Memcache extends AbstractSingletonFactory
     }
 
     /**
-     * @return array|false|string
+     * @return array|false
      */
     final protected function getKeyList()
     {
         $keyList = $this->memcache->get($this->listKey);
 
-        $time = time();
-
-        foreach ($keyList as $key => $expire)
-            if ($expire && $expire < $time)
-                unset($keyList[$key]);
+        $this->cleanKeyList($keyList);
 
         return $keyList;
     }
@@ -206,5 +202,23 @@ class Memcache extends AbstractSingletonFactory
     final protected function setKeyList(array $keyList): bool
     {
         return $this->memcache->set($this->listKey, $keyList);
+    }
+
+    /**
+     * @param array $keyList
+     * @return void
+     */
+    private function cleanKeyList(array &$keyList)
+    {
+        $count = count($keyList);
+
+        $time = time();
+
+        foreach ($keyList as $key => $expire)
+            if ($expire && $expire < $time)
+                unset($keyList[$key]);
+
+        if ($count > count($keyList))
+            $this->memcache->set($this->listKey, $keyList);
     }
 }
