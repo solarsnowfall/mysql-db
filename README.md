@@ -79,7 +79,7 @@ $index = $user->setEmail($email)->setFullName($fullName)->insert();
 ```
 Use the speedy cached schema interface to know a little more about your database.
 ```
-user Solar\Db\Table\Schema;
+use Solar\Db\Table\Schema;
 
 $table = Schema(User::TABLE);
 
