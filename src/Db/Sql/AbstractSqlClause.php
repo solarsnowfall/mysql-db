@@ -191,7 +191,7 @@ abstract class AbstractSqlClause implements SqlClauseInterface
 
             } else {
 
-                $parsed = $this->parsename($nameOrParam);
+                $parsed = $this->parseName($nameOrParam);
 
                 if (empty($parsed['column']))
                     return false;
