@@ -1,7 +1,9 @@
 <?php
 
-namespace Solar\Object\Property;
+namespace Solar\Db\Table\Row;
 
+use Solar\Object\Property\Mapper;
+use Solar\Object\Property\Visibility;
 use Solar\String\Convention;
 
 class ColumnMapper extends Mapper
@@ -35,7 +37,7 @@ class ColumnMapper extends Mapper
      * @param array $columns
      * @return ColumnMapper
      */
-    public function importColumns(array $columns): ColumnMapper
+    public function importColumns(array $columns): self
     {
         foreach (static::COLUMN_ALIAS as $name => $alias)
         {

@@ -4,7 +4,7 @@ namespace Solar\Db\Table;
 
 use Solar\Cache\Memcache;
 use Solar\Db\DbConnection;
-use Solar\Object\Property\ColumnMapper;
+use Solar\Db\Table\Column;
 
 class Schema
 {

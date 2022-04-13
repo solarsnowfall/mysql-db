@@ -2,8 +2,6 @@
 
 namespace Solar\Db\Table\Row;
 
-use Solar\Object\Property\ColumnMapper;
-
 abstract class AbstractRow extends ColumnMapper implements RowInterface
 {
     const TABLE = null;

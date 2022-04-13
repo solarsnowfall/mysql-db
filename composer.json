@@ -14,7 +14,9 @@
         "ext-mysqli": "*",
         "ext-ctype": "*",
         "ext-memcache": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "solarsnowfall/reflection-factory": "*",
+        "solarsnowfall/string-convention": "*"
     },
     "autoload": {
         "psr-4": {

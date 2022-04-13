@@ -2,7 +2,7 @@
 
 namespace Solar\Db\Table\Column;
 
-use Solar\Object\Property\ColumnMapper;
+use Solar\Db\Table\Row\ColumnMapper;
 use Solar\Object\Property\Visibility;
 use Solar\String\Convention;
 

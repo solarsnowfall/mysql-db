@@ -190,7 +190,10 @@ class Memcache extends AbstractSingletonFactory
     {
         $keyList = $this->memcache->get($this->listKey);
 
-        $this->cleanKeyList($keyList);
+        if (is_array($keyList))
+            $this->cleanKeyList($keyList);
+        else
+            $keyList = [];
 
         return $keyList;
     }
@@ -219,6 +222,6 @@ class Memcache extends AbstractSingletonFactory
                 unset($keyList[$key]);
 
         if ($count > count($keyList))
-            $this->memcache->set($this->listKey, $keyList);
+            $this->setKeyList($keyList);
     }
 }
