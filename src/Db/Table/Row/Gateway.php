@@ -83,6 +83,20 @@ class Gateway
     }
 
     /**
+     * @param array $where
+     * @param array $orderBy
+     * @param array $limit
+     * @return RowInterface
+     * @throws \Exception
+     */
+    public function findRow(array $where, array $orderBy = [], array $limit = []): RowInterface
+    {
+        $rows = $this->gateway->find($where, $orderBy, $limit);
+
+        return $this->newRowInterface($rows[0]);
+    }
+
+    /**
      * @param int|string|array $indexOrColumns
      * @return bool
      */
