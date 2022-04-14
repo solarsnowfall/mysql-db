@@ -185,6 +185,9 @@ abstract class AbstractSqlQuery extends AbstractSqlClause implements SqlQueryInt
      */
     public function where(array $where): SqlQueryInterface
     {
+        if (empty($where))
+            return $this;
+
         if ($this->table === null)
             throw new \Exception('No table specified');
 
