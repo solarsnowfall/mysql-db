@@ -75,7 +75,7 @@ class Gateway
      * @return array|RowInterface
      * @throws \Exception
      */
-    public function fetchRow(array $index, string $rowClass = null)
+    public function fetchRow(array $index, string $rowClass = '')
     {
         $select = $this->sql->select(['*']);
 
@@ -85,7 +85,7 @@ class Gateway
 
         $columns = $statement->fetchAssoc();
 
-        if ($rowClass === null)
+        if (empty($rowClass))
             return $columns;
 
         $row = new $rowClass();
