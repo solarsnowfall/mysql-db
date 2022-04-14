@@ -1,5 +1,5 @@
 {
-    "name": "solarsnowfall/mysql",
+    "name": "solarsnowfall/mysql-db",
     "description": "A simple set of mysql wrappers for automating queries.",
     "type": "library",
     "license": "MIT",
