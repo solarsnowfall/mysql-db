@@ -3,7 +3,6 @@
 namespace Solar\Db\Table\Row;
 
 use Solar\Db\DbConnection;
-use Solar\Db\Sql\Sql;
 use Solar\Db\Table\Gateway as TableGateway;
 use Solar\Object\Factory;
 
@@ -42,7 +41,7 @@ class Gateway
 
         $this->db = DbConnection::getInstance();
 
-        $this->gateway = new TableGateway($this->table, $this->rowClass);
+        $this->gateway = new TableGateway($this->table);
     }
 
     /**
