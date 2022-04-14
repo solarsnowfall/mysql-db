@@ -4,6 +4,7 @@ namespace Solar\Db\Table;
 
 use Solar\Db\DbConnection;
 use Solar\Db\Sql\Sql;
+use Solar\Db\Table\Row\RowInterface;
 
 class Gateway
 {
@@ -69,6 +70,35 @@ class Gateway
     }
 
     /**
+     * @param array $index
+     * @param string|null $rowClass
+     * @return array|RowInterface
+     * @throws \Exception
+     */
+    public function fetchRow(array $index, string $rowClass = null)
+    {
+        $select = $this->sql->select(['*']);
+
+        $select->from($this->schema)->where($index);
+
+        $statement = $select->execute();
+
+        $columns = $statement->fetchAssoc();
+
+        if ($rowClass === null)
+            return $columns;
+
+        $row = new $rowClass();
+
+        if (!$row instanceof RowInterface)
+            throw new \Exception("Invalid row interface: $rowClass");
+
+        $row->initializeColumns($columns);
+
+        return $row;
+    }
+
+    /**
      * @param array $where
      * @param array $orderBy
      * @param array $limit
@@ -92,6 +122,15 @@ class Gateway
     public function getTable(): string
     {
         return substr($this->table, 1, -1);
+    }
+
+    /**
+     * @param int|string|array $indexOrColumns
+     * @return bool
+     */
+    public function hasCompletePrimaryKey($indexOrColumns): bool
+    {
+        return $this->schema->hasCompletePrimaryKey($indexOrColumns);
     }
 
     /**
