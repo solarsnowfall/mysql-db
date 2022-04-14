@@ -8,13 +8,10 @@ use Solar\String\Convention;
 
 class ColumnMapper extends Mapper
 {
-    const COLUMN_ALIAS = [];
-
-    const COLUMN_CONVENTION = null;
-
-    const COLUMN_VISIBILITY = Visibility::PROTECTED;
-
-    const PROPERTY_CONVENTION = parent::PROPERTY_CONVENTION;
+    const COLUMN_ALIAS          = [];
+    const COLUMN_CONVENTION     = null;
+    const COLUMN_VISIBILITY     = Visibility::PROTECTED;
+    const PROPERTY_CONVENTION   = parent::PROPERTY_CONVENTION;
 
     /**
      * @return array

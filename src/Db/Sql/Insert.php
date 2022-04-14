@@ -3,20 +3,33 @@
 namespace Solar\Db\Sql;
 
 use Solar\Db\DbConnection;
-use Solar\Db\Statement;
-use Solar\Db\Table\Schema;
 
 class Insert extends AbstractSqlQuery
 {
+    const TYPE_DEFAULT  = 0;
+    const TYPE_IGNORE   = 1;
+    const TYPE_UPDATE   = 2;
+
+    /**
+     * @var int
+     */
     protected int $rowCount = 0;
 
     /**
+     * @var int
+     */
+    protected int $type;
+
+    /**
      * @param DbConnection $db
+     * @param int $type
      * @param array $columns
      */
-    public function __construct(DbConnection $db, array $columns = [])
+    public function __construct(DbConnection $db, int $type = self::TYPE_DEFAULT, array $columns = [])
     {
         $this->db = $db;
+
+        $this->type = $type;
 
         $this->columns = $columns;
     }
@@ -75,11 +88,23 @@ class Insert extends AbstractSqlQuery
 
         $columnNames = $this->formatNameList($this->columns);
 
-        $sql = "INSERT INTO $table ($columnNames) VALUES ";
+        $ignore = $this->type == self::TYPE_IGNORE ? 'IGNORE' : '';
+
+        $sql = "INSERT $ignore INTO $table ($columnNames) VALUES ";
 
         $paramMarkers = '(' . $this->paramMarker($this->columns) . ')';
 
         $sql .= $paramMarkers . str_repeat(", $paramMarkers", $this->rowCount - 1);
+
+        if ($this->type == self::TYPE_UPDATE)
+        {
+            $sql .= " ON DUPLICATE KEY UPDATE ";
+
+            foreach ($this->columns as $column)
+                $sql .= "`$column` = VALUES(`$column`), ";
+
+            $sql = substr($sql, 0, -2);
+        }
 
         return $this->formatSqlString($sql);
     }

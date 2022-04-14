@@ -7,11 +7,9 @@ use Solar\Db\Sql\Sql;
 
 class Gateway
 {
-    const INSERT_DEFAULT = 0;
-
-    const INSERT_IGNORE = 1;
-
-    const INSERT_UPDATE = 2;
+    const INSERT_DEFAULT    = 0;
+    const INSERT_IGNORE     = 1;
+    const INSERT_UPDATE     = 2;
 
     /**
      * @var DbConnection

@@ -6,15 +6,23 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
 {
     const TABLE = null;
 
+    /**
+     * @var Gateway
+     */
     private Gateway $gateway;
 
+    /**
+     * @var array
+     */
     private array $initColumns;
 
+    /**
+     * @var array
+     */
     private array $index;
 
     /**
      * @param array $columns
-     * @param string $table
      * @throws \Exception
      */
     public function __construct(array $columns = [])
@@ -22,6 +30,22 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
         $this->gateway = new Gateway(static::TABLE, static::class);
 
         $this->initializeColumns($columns);
+    }
+
+    /**
+     * @return Gateway
+     */
+    protected function getGateway(): Gateway
+    {
+        return $this->gateway;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIndex(): array
+    {
+        return $this->index;
     }
 
     /**
@@ -43,14 +67,6 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
         }
 
         return $affectedRows;
-    }
-
-    /**
-     * @return array
-     */
-    public function getIndex(): array
-    {
-        return $this->index;
     }
 
     /**
