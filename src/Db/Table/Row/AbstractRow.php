@@ -2,16 +2,11 @@
 
 namespace Solar\Db\Table\Row;
 
-use Solar\Db\Table\Gateway;
+use Solar\Db\Table\TableInterface;
 
 abstract class AbstractRow extends ColumnMapper implements RowInterface
 {
     const TABLE = null;
-
-    /**
-     * @var Gateway
-     */
-    private Gateway $gateway;
 
     /**
      * @var array
@@ -24,22 +19,19 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
     private array $index;
 
     /**
-     * @param array $columns
-     * @throws \Exception
+     * @var TableInterface
      */
-    public function __construct(array $columns = [])
-    {
-        $this->gateway = new Gateway(static::TABLE);
-
-        $this->initializeColumns($columns);
-    }
+    private TableInterface $table;
 
     /**
-     * @return Gateway
+     * @param TableInterface $table
+     * @param array $columns
      */
-    protected function getGateway(): Gateway
+    public function __construct(TableInterface $table, array $columns = [])
     {
-        return $this->gateway;
+        $this->table = $table;
+
+        $this->initializeColumns($columns);
     }
 
     /**
@@ -51,12 +43,20 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
     }
 
     /**
+     * @return TableInterface
+     */
+    protected function getTable(): TableInterface
+    {
+        return $this->table;
+    }
+
+    /**
      * @return int
      * @throws \Exception
      */
     public function delete(): int
     {
-        $affectedRows = $this->gateway->delete($this->getIndex());
+        $affectedRows = $this->table->deleteRow($this);
 
         if ($affectedRows)
         {
@@ -77,12 +77,12 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function fetch(): RowInterface
     {
-        if (!$this->gateway->hasCompletePrimaryKey($this->getIndex()))
+        if (!$this->table->hasCompletePrimaryKey($this->index))
             throw new \Exception('Attempting to fetch row in incomplete key');
 
-        $columns = $this->gateway->fetchRow($this->getIndex());
+        $rows = $this->table->getGateway()->find($this->index);
 
-        return $this->initializeColumns($columns);
+        return $this->initializeColumns($rows[0]);
     }
 
     /**
@@ -91,7 +91,7 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function initializeColumns(array $columns): AbstractRow
     {
-        $this->index = $this->gateway->extractPrimaryKey($columns);
+        $this->index = $this->table->extractPrimaryKey($columns);
 
         $this->setInitColumns($columns);
 
@@ -106,7 +106,7 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function insert(): array
     {
-        return $this->gateway->insert($this->resolveUpdatedColumns());
+        return $this->table->insertRow($this);
     }
 
     /**
@@ -129,7 +129,7 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function save()
     {
-        if ($this->gateway->hasCompletePrimaryKey($this->getIndex()))
+        if ($this->table->hasCompletePrimaryKey($this->index))
             return $this->update();
 
         return $this->insert();
@@ -141,7 +141,7 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function update(): int
     {
-        return $this->gateway->update($this->getIndex(), $this->resolveUpdatedColumns());
+        return $this->table->updateRow($this);
     }
 
     /**
