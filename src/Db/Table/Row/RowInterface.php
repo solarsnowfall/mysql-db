@@ -33,6 +33,11 @@ interface RowInterface
     /**
      * @return array
      */
+    public function populate(): array;
+
+    /**
+     * @return array
+     */
     public function resolveUpdatedColumns(): array;
 
     /**

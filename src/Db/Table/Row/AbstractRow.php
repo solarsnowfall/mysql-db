@@ -2,7 +2,7 @@
 
 namespace Solar\Db\Table\Row;
 
-use Solar\Db\Table\TableInterface;
+use Solar\Db\Table\Gateway;
 
 abstract class AbstractRow extends ColumnMapper implements RowInterface
 {
@@ -19,19 +19,19 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
     private array $index;
 
     /**
-     * @var TableInterface
+     * @var Gateway
      */
-    private TableInterface $table;
+    private Gateway $tableGateway;
 
     /**
-     * @param TableInterface $table
-     * @param array $columns
+     * @param int|string|array $indexOrColumns
+     * @throws \Exception
      */
-    public function __construct(TableInterface $table, array $columns = [])
+    public function __construct($indexOrColumns)
     {
-        $this->table = $table;
+        $this->tableGateway = new Gateway(static::TABLE);
 
-        $this->initializeColumns($columns);
+        $this->initializeColumns($indexOrColumns);
     }
 
     /**
@@ -43,11 +43,11 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
     }
 
     /**
-     * @return TableInterface
+     * @return Gateway
      */
-    protected function getTable(): TableInterface
+    protected function getTableGateway(): Gateway
     {
-        return $this->table;
+        return $this->tableGateway;
     }
 
     /**
@@ -56,42 +56,35 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function delete(): int
     {
-        $affectedRows = $this->table->deleteRow($this);
+        if ($this->tableGateway->hasCompletePrimaryKey($this->index))
+            return 0;
+
+        $affectedRows = $this->tableGateway->delete($this->index);
 
         if ($affectedRows)
         {
             foreach (static::listColumns() as $property)
                 unset($this->$property);
 
-            $this->setInitColumns([]);
-
-            $this->index = [];
+            $this->initializeColumns([]);
         }
 
         return $affectedRows;
     }
 
     /**
-     * @return RowInterface
+     * @param int|string|array $indexOrColumns
+     * @return $this
      * @throws \Exception
      */
-    public function fetch(): RowInterface
+    public function initializeColumns($indexOrColumns): AbstractRow
     {
-        if (!$this->table->hasCompletePrimaryKey($this->index))
-            throw new \Exception('Attempting to fetch row in incomplete key');
+        $this->index = $this->tableGateway->extractPrimaryKey($indexOrColumns);
 
-        $rows = $this->table->getGateway()->find($this->index);
+        $columns = is_array($indexOrColumns) ? $indexOrColumns : $this->index;
 
-        return $this->initializeColumns($rows[0]);
-    }
-
-    /**
-     * @param array $columns
-     * @return AbstractRow
-     */
-    public function initializeColumns(array $columns): AbstractRow
-    {
-        $this->index = $this->table->extractPrimaryKey($columns);
+        if (count($this->index) === count($columns) && $this->tableGateway->hasCompletePrimaryKey($this->index))
+            $columns = $this->tableGateway->findOne($this->index);
 
         $this->setInitColumns($columns);
 
@@ -106,7 +99,25 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function insert(): array
     {
-        return $this->table->insertRow($this);
+        return $this->tableGateway->insert($this->exportColumns());
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function populate(): array
+    {
+        if (!$this->tableGateway->hasCompletePrimaryKey($this->index))
+            throw new \Exception('Cannot populate values without a complete kry');
+
+        $columns = $this->tableGateway->findOne($this->index);
+
+        $this->setInitColumns($columns);
+
+        $this->importColumns($columns);
+
+        return $columns;
     }
 
     /**
@@ -129,7 +140,7 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function save()
     {
-        if ($this->table->hasCompletePrimaryKey($this->index))
+        if ($this->tableGateway->hasCompletePrimaryKey($this->index))
             return $this->update();
 
         return $this->insert();
@@ -141,7 +152,12 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function update(): int
     {
-        return $this->table->updateRow($this);
+        $columns = $this->resolveUpdatedColumns();
+
+        if (empty($columns))
+            return 0;
+
+        return $this->tableGateway->update($this->index, $columns);
     }
 
     /**

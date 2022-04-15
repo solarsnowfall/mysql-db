@@ -117,6 +117,19 @@ class Gateway
     }
 
     /**
+     * @param array $where
+     * @param array $orderBy
+     * @return array
+     * @throws \Exception
+     */
+    public function findOne(array $where, array $orderBy = []): array
+    {
+        $rows = $this->find($where, $orderBy, [1]);
+
+        return $rows[0] ?? [];
+    }
+
+    /**
      * @return string
      */
     public function getTable(): string
