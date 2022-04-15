@@ -75,7 +75,7 @@ class Table implements TableInterface
         $rows = [];
 
         foreach ($this->gateway->find($where, $orderBy, $limit) as $columns)
-            $rows[] = new $this->rowPrototype($this, $columns);
+            $rows[] = new $this->rowPrototype($columns);
 
         return $rows;
     }
@@ -90,7 +90,7 @@ class Table implements TableInterface
     {
         $rows = $this->gateway->find($where, $orderBy, [1]);
 
-        return new $this->rowPrototype($this, $rows[0]);
+        return new $this->rowPrototype($rows[0]);
     }
 
     /**
