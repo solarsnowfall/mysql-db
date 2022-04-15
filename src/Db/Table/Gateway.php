@@ -102,7 +102,7 @@ class Gateway
      * @param array $where
      * @param array $orderBy
      * @param array $limit
-     * @return array
+     * @return array[]
      * @throws \Exception
      */
     public function find(array $where, array $orderBy = [], array $limit = []): array
