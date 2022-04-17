@@ -128,6 +128,8 @@ abstract class AbstractSqlClause implements SqlClauseInterface
             $parts = explode('.', $word);
 
             $words[$key] = '`' . implode('`.`', $parts) . '`';
+
+            $words[$key] = str_replace('`*`', '*', $words[$key]);
         }
 
         $formatted .= implode(', ', $words);
