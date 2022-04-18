@@ -3,6 +3,7 @@
 namespace Solar\Db\Table;
 
 use Solar\Db\DbConnection;
+use Solar\Db\Sql\Insert;
 use Solar\Db\Sql\Sql;
 use Solar\Db\Table\Row\RowInterface;
 
@@ -172,10 +173,11 @@ class Gateway
 
     /**
      * @param array $row
+     * @param int $type
      * @return array
      * @throws \Exception
      */
-    public function insert(array $row): array
+    public function insert(array $row, int $type = Insert::TYPE_DEFAULT): array
     {
         try {
 
@@ -186,7 +188,7 @@ class Gateway
             throw new \Exception('Unable to insert: ' . $exception->getMessage());
         }
 
-        $insert = $this->sql->insert();
+        $insert = $this->sql->insert($type);
 
         $statement = $insert->into($this->schema)->columns($row)->values($row)->execute();
 

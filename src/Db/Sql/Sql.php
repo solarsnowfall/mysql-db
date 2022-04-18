@@ -23,11 +23,12 @@ class Sql
     }
 
     /**
+     * @param int $type
      * @return Insert
      */
-    public function insert(): Insert
+    public function insert(int $type = Insert::TYPE_DEFAULT): Insert
     {
-        return new Insert($this->db);
+        return new Insert($this->db, $type);
     }
 
     /**
