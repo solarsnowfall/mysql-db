@@ -48,6 +48,38 @@ class Gateway
     }
 
     /**
+     * @return DbConnection
+     */
+    public function getDb(): DbConnection
+    {
+        return $this->db;
+    }
+
+    /**
+     * @return Schema
+     */
+    public function getSchema(): Schema
+    {
+        return $this->schema;
+    }
+
+    /**
+     * @return Sql
+     */
+    public function getSql()
+    {
+        return $this->sql;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+
+    /**
      * @param array $index
      * @return int
      * @throws \Exception
@@ -130,14 +162,6 @@ class Gateway
     }
 
     /**
-     * @return string
-     */
-    public function getTable(): string
-    {
-        return substr($this->table, 1, -1);
-    }
-
-    /**
      * @param int|string|array $indexOrColumns
      * @return bool
      */
@@ -208,13 +232,5 @@ class Gateway
         $suffix = $param ? " = ?" : '';
 
         return '`' . implode('`.`', $parts) . '`' . $suffix;
-    }
-
-    /**
-     * @return Schema
-     */
-    public function getSchema(): Schema
-    {
-        return $this->schema;
     }
 }

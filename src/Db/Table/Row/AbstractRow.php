@@ -24,14 +24,15 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
     private Gateway $tableGateway;
 
     /**
-     * @param int|string|array $indexOrColumns
+     * @param int|string|array|null $indexOrColumns
      * @throws \Exception
      */
-    public function __construct($indexOrColumns)
+    public function __construct($indexOrColumns = null)
     {
         $this->tableGateway = new Gateway(static::TABLE);
 
-        $this->initializeColumns($indexOrColumns);
+        if ($indexOrColumns !== null)
+            $this->initializeColumns($indexOrColumns);
     }
 
     /**
