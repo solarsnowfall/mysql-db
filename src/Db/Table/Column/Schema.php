@@ -180,6 +180,9 @@ class Schema extends ColumnMapper
      */
     public function testValueDataType($value): string
     {
+        if ($value === null && $this->isNullable)
+            return self::VALUE_GOOD;
+
         switch ($this->dataType)
         {
             case 'bigint':

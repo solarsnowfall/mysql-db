@@ -333,7 +333,7 @@ class Schema
     {
         foreach ($columns as $name => $value)
             if (Column\Schema::VALUE_GOOD !== $result = $this->getColumn($name)->testValue($value))
-                throw new \Exception("Invalid value for column $name: $value, $result");
+                throw new \Exception("Invalid value for column $this->schema.$this->table.$name: $value, $result");
 
         return $this;
     }
