@@ -11,12 +11,12 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
     /**
      * @var array
      */
-    private array $initColumns;
+    private array $initColumns = [];
 
     /**
      * @var array
      */
-    private array $index;
+    private array $index = [];
 
     /**
      * @var Gateway
