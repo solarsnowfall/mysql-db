@@ -89,7 +89,7 @@ class Gateway
     {
         $delete = $this->sql->delete();
 
-        return $delete->where($index)->execute()->affectedRows();
+        return $delete->from($this->schema)->where($index)->execute()->affectedRows();
     }
 
     /**

@@ -155,6 +155,9 @@ class Schema extends ColumnMapper
      */
     public function testValue($value): string
     {
+        if ($value === null && $this->isNullable)
+            return static::VALUE_GOOD;
+
         $methods = [
             'testValueRequired',
             'testValueDataType',
