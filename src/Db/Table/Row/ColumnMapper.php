@@ -65,7 +65,7 @@ class ColumnMapper extends Mapper
             unset($properties[$alias]);
         }
 
-        return Convention::convertKeys($properties, static::COLUMN_CONVENTION);
+        return Convention::convertArray($properties, static::COLUMN_CONVENTION);
     }
 
 

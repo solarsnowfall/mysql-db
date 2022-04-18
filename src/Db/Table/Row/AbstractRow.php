@@ -3,6 +3,7 @@
 namespace Solar\Db\Table\Row;
 
 use Solar\Db\Table\Gateway;
+use Solar\String\Convention;
 
 abstract class AbstractRow extends ColumnMapper implements RowInterface
 {
@@ -128,8 +129,12 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
         $columns = [];
 
         foreach (static::listColumns() as $name)
-            if ($this->initColumns[$name] !== $this->$name)
-                $columns[$name] = $this->$name;
+        {
+            $property = Convention::convert($name, static::PROPERTY_CONVENTION);
+
+            if ($this->initColumns[$name] !== $this->$property)
+                $columns[$name] = $this->$property;
+        }
 
         return $columns;
     }
