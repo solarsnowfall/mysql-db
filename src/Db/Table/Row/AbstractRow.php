@@ -31,8 +31,7 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
     {
         $this->tableGateway = new Gateway(static::TABLE);
 
-        if ($indexOrColumns !== null)
-            $this->initializeColumns($indexOrColumns);
+        $this->initializeColumns($indexOrColumns);
     }
 
     /**
