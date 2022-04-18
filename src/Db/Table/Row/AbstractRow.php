@@ -100,7 +100,7 @@ abstract class AbstractRow extends ColumnMapper implements RowInterface
      */
     public function insert(): array
     {
-        return $this->tableGateway->insert($this->exportColumns());
+        return $this->tableGateway->insert($this->resolveUpdatedColumns());
     }
 
     /**
