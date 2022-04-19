@@ -12,8 +12,6 @@ class Where extends AbstractSqlClause
     public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
-
-        $this->sqlString = $this->generateSqlString();
     }
 
     /**
