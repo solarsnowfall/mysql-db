@@ -19,7 +19,7 @@ include 'config.php';
 
 $db = DbConnection::getInstance();
 ```
-Provides a wrapper which enforces a prepared statement only paradimg.
+Provides a wrapper which enforces a prepared statement only paradigm.
 ```
 $stmt = $db->execute($sql, $params, $types);
 
