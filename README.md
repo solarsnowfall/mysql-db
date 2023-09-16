@@ -4,7 +4,7 @@ Provides static factory creation of datbase connection.
 // config.php
 include 'vender/autoload.php';
 
-user Solar\Db\DbConnection;
+use Solar\Db\DbConnection;
 
 DbConnection::initialize([
   'host'      => 'host',
